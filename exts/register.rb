@@ -1,6 +1,6 @@
 require "discorb"
 
-module Commands
+module Core::Register
   extend Discorb::Extension
 
   slash "register", "新しいPrefixを登録します。", {
