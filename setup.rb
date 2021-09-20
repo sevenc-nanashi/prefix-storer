@@ -11,7 +11,7 @@ conn.exec(<<~SQL)
     prefix text,
     guild_id text,
 
-    unique(bot_id, guild_id)
+    CONSTRAINT uniq_bot_per_guild UNIQUE (bot_id, guild_id)
   )
 SQL
 conn.exec(<<~SQL)
@@ -19,6 +19,6 @@ conn.exec(<<~SQL)
     guild_id text,
     format text,
 
-    unique(guild_id)
+    CONSTRAINT uniq_guild_id UNIQUE (guild_id)
   )
 SQL
