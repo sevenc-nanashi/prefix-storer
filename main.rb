@@ -16,7 +16,9 @@ client.once :ready do
 end
 
 load "./exts/eval.rb"
+load "./exts/commands.rb"
 
 client.extend Evaler
+client.extend Commands
 
 client.run ENV["TOKEN"]  # Starts client
