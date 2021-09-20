@@ -13,6 +13,8 @@ end
 client.once :ready do
   puts "Logged in as #{client.user}"
   client.db = PG.connect(ENV["DATABASE_URL"])
+
+  client.dispatch(:prepare_db)
 end
 
 load "./exts/eval.rb"
