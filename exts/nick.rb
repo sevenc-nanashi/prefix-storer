@@ -66,7 +66,7 @@ module Core::Nickname
           counter[:success] += 1
         end
       end
-      interaction.post("#{counter[:success]}個のBotのニックネームを変更しました。\n成功: #{counter[:success]}\n失敗: #{counter[:failure]}\n変更無し: #{counter[:failure]}", ephemeral: true)
+      interaction.post("#{counter[:success]}個のBotのニックネームを変更しました。\n成功: #{counter[:success]}\n失敗: #{counter[:failure]}\n変更無し: #{counter[:skipped]}", ephemeral: true)
     end
   end
 
