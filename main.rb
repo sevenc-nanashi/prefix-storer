@@ -26,4 +26,6 @@ load "./exts/nick.rb"
 client.extend Core::Register
 client.extend Core::Nickname
 
+Process.setproctitle("discorb: prefix_viewer")
+
 client.run ENV["TOKEN"]  # Starts client
