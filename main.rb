@@ -12,15 +12,20 @@ end
 
 client.once :ready do
   puts "Logged in as #{client.user}"
-  client.db = PG.connect(ENV["DATABASE_URL"])
 
+  client.db = PG.connect(ENV["DATABASE_URL"])
+  puts "Connected to database"
   client.dispatch(:prepare_db)
 end
 
+module Core; end
+
 load "./exts/eval.rb"
 load "./exts/register.rb"
+load "./exts/nick.rb"
 
 client.extend Evaler
 client.extend Core::Register
+client.extend Core::Nickname
 
 client.run ENV["TOKEN"]  # Starts client
