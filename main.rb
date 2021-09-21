@@ -20,7 +20,6 @@ end
 
 module Core; end
 
-load "./exts/eval.rb"
 load "./exts/register.rb"
 load "./exts/nick.rb"
 
