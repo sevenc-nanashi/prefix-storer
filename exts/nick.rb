@@ -59,7 +59,11 @@ module Core::Nickname
           next
         end
         begin
-          b.edit(nick: bot_format).wait
+          if b == @client.user
+            interaction.guild.edit_nickname(bot_format)
+          else
+            b.edit(nick: bot_format).wait
+          end
         rescue Discorb::ForbiddenError
           counter[:failure] += 1
         else
