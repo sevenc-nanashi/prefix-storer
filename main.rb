@@ -23,7 +23,6 @@ module Core; end
 load "./exts/register.rb"
 load "./exts/nick.rb"
 
-client.extend Evaler
 client.extend Core::Register
 client.extend Core::Nickname
 
