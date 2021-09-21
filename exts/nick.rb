@@ -40,10 +40,14 @@ module Core::Nickname
         next
       end
       interaction.defer_source(ephemeral: true).wait
-      nick_format = @client.db.exec_prepared("find_prefix_format", [interaction.guild.id.to_s]).first
+      nick_format = @client.db.exec_prepared("find_prefix_format", [interaction.guild.id.to_s])&.first
       bot_prefixes = @client.db.exec_prepared("find_prefix_in_guild", [interaction.guild.id.to_s])
       if nick_format.nil?
         interaction.post("`nick format`コマンドでフォーマットを設定して下さい。", ephemeral: true).wait
+        next
+      end
+      if bot_prefixes.nil?
+        interaction.post("`register`で登録してから実行してください。", ephemeral: true).wait
         next
       end
       nick_format = nick_format["format"]
