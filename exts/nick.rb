@@ -19,7 +19,7 @@ module Core::Nickname
   slash_group "pnick", "ニックネーム変更関連のコマンドです。" do |group|
     group.slash "format", "ニックネームのフォーマットを変更します。", {
       "format" => {
-        description: "ニックネームのフォーマットを指定します。プレフィックスは%p、Bot名は%nで指定して下さい。",
+        description: "ニックネームのフォーマットを指定します。プレフィックスは{prefix}、Bot名は{name}で指定して下さい。",
         type: :string,
         required: true,
       },
@@ -76,7 +76,7 @@ module Core::Nickname
 
   class << self
     def format_prefix(base, prefix, name)
-      base.gsub("%p", prefix).gsub("%n", name)
+      base.gsub("{prefix}", prefix).gsub("{name}", name)
     end
   end
 end
