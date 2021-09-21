@@ -15,7 +15,7 @@ module Core::Register
       required: true,
     },
   } do |interaction, bot, prefix|
-    unless interaction.target.guild_permissions.manage_guild?
+    unless interaction.target.permissions.manage_guild?
       interaction.post("`サーバーの管理`権限がありません。", ephemeral: true)
       next
     end
