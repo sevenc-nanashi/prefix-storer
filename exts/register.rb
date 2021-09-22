@@ -23,7 +23,7 @@ module Core::Register
       interaction.post("Bot以外は登録できません。", ephemeral: true)
       next
     end
-    interaction.defer_source(ephemeral: true)
+    interaction.defer_source(ephemeral: true).wait
     @client.db.exec_prepared("insert_prefix", [interaction.guild.id.to_s, bot.id.to_s, prefix.to_s])
     interaction.post("#{bot.mention} のPrefixを `#{prefix}` として登録しました。", ephemeral: true)
   end
