@@ -1,3 +1,8 @@
+#! /bin/sh
+bundle exec discorb run -d
+
+#! /usr/bin/env ruby
+
 require "discorb"
 require "dotenv"
 require "pg"
