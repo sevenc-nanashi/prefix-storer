@@ -43,7 +43,7 @@ module Core::Nickname
       nick_format = @client.db.exec_prepared("find_prefix_format", [interaction.guild.id.to_s])&.first
       bot_prefixes = @client.db.exec_prepared("find_prefix_in_guild", [interaction.guild.id.to_s])
       if nick_format.nil?
-        interaction.post("`nick format`コマンドでフォーマットを設定して下さい。", ephemeral: true).wait
+        interaction.post("`pnick format`コマンドでフォーマットを設定して下さい。", ephemeral: true).wait
         next
       end
       if bot_prefixes.nil?
