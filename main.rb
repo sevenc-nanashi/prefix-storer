@@ -2,6 +2,7 @@
 bundle exec discorb run -d
 
 #! /usr/bin/env ruby
+# coding: utf-8
 
 require "discorb"
 require "dotenv"
