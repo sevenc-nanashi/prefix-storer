@@ -48,6 +48,29 @@ module Core::Register
     next
   end
 
+  slash "delete", "Prefixを削除します。", {
+    "bot" => {
+      description: "Prefixを削除するBot。",
+      type: :user,
+    },
+  } do |interaction, bot|
+    unless interaction.target.permissions.manage_guild?
+      interaction.post("`サーバーの管理`権限がありません。", ephemeral: true)
+      next
+    end
+    unless bot.bot?
+      interaction.post("Bot以外は削除できません。", ephemeral: true)
+      next
+    end
+    interaction.defer_source(ephemeral: true).wait
+    result = @client.db.exec_prepared("delete_prefix", [interaction.guild.id.to_s, bot.id.to_s])
+    if result.cmd_tuples == 0
+      interaction.post("#{bot.mention} は登録されていません。", ephemeral: true)
+    else
+      interaction.post("#{bot.mention} のPrefixを削除しました。", ephemeral: true)
+    end
+  end
+
   event :prepare_db do
     @client.db.prepare("insert_prefix", <<~SQL)
       INSERT INTO prefixes (guild_id, bot_id, prefix) VALUES ($1, $2, $3)
@@ -55,5 +78,6 @@ module Core::Register
       DO UPDATE SET prefix = $3
     SQL
     @client.db.prepare("select_prefix", "SELECT prefix FROM prefixes WHERE guild_id = $1 AND bot_id = $2")
+    @client.db.prepare("delete_prefix", "DELETE FROM prefixes WHERE guild_id = $1 AND bot_id = $2")
   end
 end
