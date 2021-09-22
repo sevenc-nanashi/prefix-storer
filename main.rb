@@ -4,8 +4,8 @@ require "pg"
 
 Dotenv.load
 
-intents = Discorb::Intents.default
-intents.members = true
+intents = Discorb::Intents.all
+
 client = Discorb::Client.new(intents: intents)
 
 class << client
