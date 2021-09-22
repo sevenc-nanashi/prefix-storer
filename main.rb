@@ -22,9 +22,11 @@ end
 
 module Core; end
 
+load "./exts/eval.rb"
 load "./exts/register.rb"
 load "./exts/nick.rb"
 
+client.extend Core::Evaler
 client.extend Core::Register
 client.extend Core::Nickname
 
