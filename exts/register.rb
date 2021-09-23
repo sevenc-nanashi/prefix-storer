@@ -71,6 +71,21 @@ module Core::Register
     end
   end
 
+  user_command "Prefixを表示" do |interaction, user|
+    unless user.bot?
+      interaction.post("Bot以外は表示できません。", ephemeral: true)
+      next
+    end
+    interaction.defer_source(ephemeral: true).wait
+    prefix = @client.db.exec_prepared("select_prefix", [interaction.guild.id.to_s, user.id.to_s]).first
+    unless prefix
+      interaction.post("#{user.mention} は登録されていません。", ephemeral: true)
+      next
+    end
+    interaction.post("#{user.mention} のPrefixは `#{prefix["prefix"]}` です。", ephemeral: true)
+    next
+  end
+
   event :prepare_db do
     @client.db.prepare("insert_prefix", <<~SQL)
       INSERT INTO prefixes (guild_id, bot_id, prefix) VALUES ($1, $2, $3)
