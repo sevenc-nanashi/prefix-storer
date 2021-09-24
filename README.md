@@ -2,6 +2,8 @@
 
 このBotはBotのプレフィックスを保存し、一括でニックネームを変更できるBotです。
 
+[招待](https://discord.com/api/oauth2/authorize?client_id=804818670974402591&permissions=201326592&scope=bot%20applications.commands)
+
 ## 使い方
 
 `/register` でBotのプレフィックスを登録します。
