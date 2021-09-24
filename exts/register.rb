@@ -71,6 +71,43 @@ module Core::Register
     end
   end
 
+  slash "search", "他サーバーからPrefixの情報を取得します。", {
+    "bot" => {
+      description: "Prefixの情報を取得するBot。",
+      type: :user,
+    },
+  } do |interaction, bot|
+    unless bot.bot?
+      interaction.post("Bot以外は取得できません。", ephemeral: true)
+      next
+    end
+    interaction.defer_source(ephemeral: true).wait
+    prefixes = @client.db.exec_prepared("search_prefix_global", [bot.id.to_s])&.map { |row| row["prefix"] }
+    if prefixes == [nil]
+      interaction.post("#{bot.mention} のPrefixを見つけられませんでした。", ephemeral: true)
+      next
+    end
+    best_prefix = prefixes.max_by { |prefix| prefixes.count(prefix) }
+    interaction.post("#{bot.mention} のPrefixは `#{best_prefix}` が最も多く登録されています。", ephemeral: true).wait
+
+    next unless interaction.target.permissions.manage_guild?
+
+    randstr = SecureRandom.hex(8)
+    interaction.post("Prefixを登録しますか？", ephemeral: true,
+                                       components: [
+                                         Discorb::Button.new("はい", :primary, custom_id: "yes:#{randstr}"),
+                                         Discorb::Button.new("いいえ", :danger, custom_id: "no:#{randstr}"),
+                                       ]).wait
+    button_interaction = @client.event_lock(:button_click, 30) { |interaction| interaction.custom_id.end_with?("#{randstr}") }.wait
+    if button_interaction.custom_id.start_with?("yes")
+      button_interaction.defer_source(ephemeral: true).wait
+      @client.db.exec_prepared("insert_prefix", [interaction.guild.id.to_s, bot.id.to_s, best_prefix])
+      button_interaction.post("#{bot.mention} のPrefixを `#{best_prefix}` として登録しました。", ephemeral: true)
+    else
+      button_interaction.post("登録をキャンセルしました。", ephemeral: true)
+    end
+  end
+
   user_command "Prefixを表示" do |interaction, user|
     unless user.bot?
       interaction.post("Bot以外は表示できません。", ephemeral: true)
@@ -92,7 +129,17 @@ module Core::Register
       ON CONFLICT ON CONSTRAINT uniq_bot_per_guild
       DO UPDATE SET prefix = $3
     SQL
-    @client.db.prepare("select_prefix", "SELECT prefix FROM prefixes WHERE guild_id = $1 AND bot_id = $2")
-    @client.db.prepare("delete_prefix", "DELETE FROM prefixes WHERE guild_id = $1 AND bot_id = $2")
+
+    @client.db.prepare("select_prefix", <<~SQL)
+      SELECT prefix FROM prefixes WHERE guild_id = $1 AND bot_id = $2
+    SQL
+
+    @client.db.prepare("delete_prefix", <<~SQL)
+      DELETE FROM prefixes WHERE guild_id = $1 AND bot_id = $2
+    SQL
+
+    @client.db.prepare("search_prefix_global", <<~SQL)
+      SELECT prefix FROM prefixes WHERE bot_id = $1
+    SQL
   end
 end
