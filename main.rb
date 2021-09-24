@@ -32,11 +32,11 @@ module Core; end
 load "./exts/eval.rb"
 load "./exts/register.rb"
 load "./exts/nick.rb"
+load "./exts/status.rb"
 
 client.extend Core::Evaler
 client.extend Core::Register
 client.extend Core::Nickname
-
-Process.setproctitle("discorb: prefix_viewer")
+client.extend Core::Status
 
 client.run ENV["TOKEN"]  # Starts client
