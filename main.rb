@@ -7,6 +7,7 @@ require "pg"
 
 Dotenv.load
 
+Encoding.default_internal = __ENCODING__
 intents = Discorb::Intents.default
 intents.members = true
 
