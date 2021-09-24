@@ -7,7 +7,7 @@ module Core::Status
     event event_name do
       @client.update_presence(
         Discorb::Activity.new(
-          name: "#{client.guilds.length} Servers"
+          name: "#{@client.guilds.length} Servers"
         ),
         status: :online
       )
