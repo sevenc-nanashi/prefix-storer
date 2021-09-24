@@ -48,9 +48,9 @@ module Core::Register
     next
   end
 
-  slash "delete", "Prefixを削除します。", {
+  slash "delete", "Prefixの登録を解除します。", {
     "bot" => {
-      description: "Prefixを削除するBot。",
+      description: "Prefixの登録を解除するBot。",
       type: :user,
     },
   } do |interaction, bot|
