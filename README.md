@@ -13,11 +13,12 @@
 
 | フォーマット | 例 |
 | ----------- | --- |
-| `[ %p ] %n` | `[ / ] Prefix Viewer` |
-| `<%p> %n` | `</> Prefix Viewer` |
-| `%p ) %n` | `/ ) Prefix Viewer` |
-| `%p> %n` | `/ > Prefix Viewer` |
+| `[ {prefix} ] {name}` | `[ / ] Prefix Viewer` |
+| `<{prefix}> {name}` | `</> Prefix Viewer` |
+| `{prefix} ) {name}` | `/ ) Prefix Viewer` |
+| `{prefix}> {name}` | `/ > Prefix Viewer` |
+| `{name}: {prefix}` | `Prefix Viewer: /` |
 
-## License
+## ライセンス
 
 MIT Licenseで公開しています。
