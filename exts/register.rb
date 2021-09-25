@@ -82,13 +82,20 @@ module Core::Register
       next
     end
     interaction.defer_source(ephemeral: true).wait
-    prefixes = @client.db.exec_prepared("search_prefix_global", [bot.id.to_s])&.map { |row| row["prefix"] }
-    if prefixes == [nil]
-      interaction.post("#{bot.mention} のプレフィックスを見つけられませんでした。", ephemeral: true)
-      next
-    end
-    best_prefix = prefixes.max_by { |prefix| prefixes.count(prefix) }
-    interaction.post("#{bot.mention} のプレフィックスは `#{best_prefix}` が最も多く登録されています。", ephemeral: true).wait
+    default_prefix = @client.db.exec_prepared("select_prefix", [interaction.guild.id.to_s, bot.id.to_s]).first
+    prefix = if default_prefix
+        interaction.post("#{bot.mention} のプレフィックスは `#{default_prefix}` がデフォルトとして設定されています。", ephemeral: true)
+        default_prefix
+      else
+        prefixes = @client.db.exec_prepared("search_prefix_global", [bot.id.to_s])&.map { |row| row["prefix"] }
+        if prefixes == [nil]
+          interaction.post("#{bot.mention} のプレフィックスを見つけられませんでした。", ephemeral: true)
+          next
+        end
+        best_prefix = prefixes.max_by { |prefix| prefixes.count(prefix) }
+        interaction.post("#{bot.mention} のプレフィックスは `#{best_prefix}` が最も多く登録されています。", ephemeral: true).wait
+        best_prefix
+      end
 
     next unless interaction.target.permissions.manage_guild?
 
@@ -101,8 +108,8 @@ module Core::Register
     button_interaction = @client.event_lock(:button_click, 30) { |interaction| interaction.custom_id.end_with?("#{randstr}") }.wait
     if button_interaction.custom_id.start_with?("yes")
       button_interaction.defer_source(ephemeral: true).wait
-      @client.db.exec_prepared("insert_prefix", [interaction.guild.id.to_s, bot.id.to_s, best_prefix])
-      button_interaction.post("#{bot.mention} のプレフィックスを `#{best_prefix}` として登録しました。", ephemeral: true)
+      @client.db.exec_prepared("insert_prefix", [interaction.guild.id.to_s, bot.id.to_s, prefix])
+      button_interaction.post("#{bot.mention} のプレフィックスを `#{prefix}` として登録しました。", ephemeral: true)
     else
       button_interaction.post("登録をキャンセルしました。", ephemeral: true)
     end
@@ -119,12 +126,19 @@ module Core::Register
       next
     end
     processing_msg = interaction.post("プレフィックスの情報を取得しています...", ephemeral: true).wait
-    raw_prefixes = @client.db.exec(<<~SQL)
-      SELECT prefix, bot_id FROM prefixes WHERE bot_id IN (#{interaction.guild.members.filter(&:bot?).map(&:id).map { |id| "'#{id}'" }.join(",")})
+    in_query = interaction.guild.members.filter(&:bot?).map(&:id).map { |id| "'#{id}'" }.join(",")
+    default_raw_prefixes = @client.db.exec(<<~SQL)
+      SELECT prefix, bot_id FROM default_prefixes WHERE bot_id IN (#{in_query})
     SQL
+    raw_prefixes = @client.db.exec(<<~SQL)
+      SELECT prefix, bot_id FROM prefixes WHERE bot_id IN (#{in_query})
+    SQL
+
     prefixes = raw_prefixes.group_by { |prefix| prefix["bot_id"] }.map do |bot_id, prefix|
       [bot_id, prefix.max_by { |prefix| prefix.count(prefix) }["prefix"]]
     end.to_h
+    default_prefixes = default_raw_prefixes.group_by { |prefix| prefix["bot_id"] }.map { |bot_id, prefix| [bot_id, prefix["prefix"]] }.to_h
+    prefixes.merge!(default_prefixes)
     processing_msg.edit("#{prefixes.length}Botのプレフィックスの情報を取得しました。")
     unless override
       guild_prefixes = @client.db.exec_prepared("search_prefix_guild", [interaction.guild.id.to_s])&.map { |row| [row["bot_id"], row["prefix"]] }&.to_h
@@ -172,6 +186,10 @@ module Core::Register
 
     @client.db.prepare("search_prefix_guild", <<~SQL)
       SELECT prefix, bot_id FROM prefixes WHERE guild_id = $1
+    SQL
+
+    @client.db.prepare("search_default_prefix", <<~SQL)
+      SELECT prefix FROM default_prefixes WHERE bot_id = $1
     SQL
   end
 end
