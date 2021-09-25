@@ -108,6 +108,34 @@ module Core::Register
     end
   end
 
+  slash "import", "他サーバーからPrefixの情報を取得し、一括で適用します。", {
+    "override" => {
+      description: "登録済みのPrefixを上書きするかどうか。",
+      type: :boolean,
+    },
+  } do |interaction, override|
+    unless interaction.target.permissions.manage_guild?
+      interaction.post("`サーバーの管理`権限がありません。", ephemeral: true)
+      next
+    end
+    processing_msg = interaction.post("Prefixの情報を取得しています...", ephemeral: true).wait
+    raw_prefixes = @client.db.exec(<<~SQL)
+      SELECT prefix, bot_id FROM prefixes WHERE bot_id IN (#{interaction.guild.members.filter(&:bot?).map(&:id).map { |id| "'#{id}'" }.join(",")})
+    SQL
+    prefixes = raw_prefixes.group_by { |prefix| prefix["bot_id"] }.map do |bot_id, prefix|
+      [bot_id, prefix.max_by { |prefix| prefix.count(prefix) }["prefix"]]
+    end.to_h
+    processing_msg.edit("#{prefixes.length}BotのPrefixの情報を取得しました。")
+    unless override
+      guild_prefixes = @client.db.exec_prepared("search_prefix_guild", [interaction.guild.id.to_s])&.map { |row| [row["bot_id"], row["prefix"]] }&.to_h
+      prefixes.merge!(guild_prefixes)
+    end
+    prefixes.each do |bot_id, prefix|
+      @client.db.exec_prepared("insert_prefix", [interaction.guild.id.to_s, bot_id, prefix])
+    end
+    interaction.post("Prefixを登録しました。", ephemeral: true)
+  end
+
   user_command "Prefixを表示" do |interaction, user|
     unless user.bot?
       interaction.post("Bot以外は表示できません。", ephemeral: true)
@@ -140,6 +168,10 @@ module Core::Register
 
     @client.db.prepare("search_prefix_global", <<~SQL)
       SELECT prefix FROM prefixes WHERE bot_id = $1
+    SQL
+
+    @client.db.prepare("search_prefix_guild", <<~SQL)
+      SELECT prefix, bot_id FROM prefixes WHERE guild_id = $1
     SQL
   end
 end
