@@ -1,4 +1,4 @@
-# Prefix Viewer
+# Prefix Storer
 
 [![招待](https://img.shields.io/badge/Bot-Invite-5865f2?logo=discord&logoColor=fff&style=for-the-badge)](https://discord.com/api/oauth2/authorize?client_id=889451143216898048&permissions=201326592&scope=bot%20applications.commands) 
 [![サポート](https://img.shields.io/badge/Support-Join-5865f2?logo=discord&logoColor=fff&style=for-the-badge)](https://discord.gg/3xb8WKUu3h)
@@ -17,11 +17,11 @@
 
 | フォーマット | 例 |
 | ----------- | --- |
-| `[ {prefix} ] {name}` | `[ / ] Prefix Viewer` |
-| `<{prefix}> {name}` | `</> Prefix Viewer` |
-| `{prefix} ) {name}` | `/ ) Prefix Viewer` |
-| `{prefix}> {name}` | `/ > Prefix Viewer` |
-| `{name}: {prefix}` | `Prefix Viewer: /` |
+| `[ {prefix} ] {name}` | `[ / ] Prefix Storer` |
+| `<{prefix}> {name}` | `</> Prefix Storer` |
+| `{prefix} ) {name}` | `/ ) Prefix Storer` |
+| `{prefix}> {name}` | `/ > Prefix Storer` |
+| `{name}: {prefix}` | `Prefix Storer: /` |
 
 ## ライセンス
 
