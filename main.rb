@@ -34,10 +34,12 @@ load "./exts/eval.rb"
 load "./exts/register.rb"
 load "./exts/nick.rb"
 load "./exts/status.rb"
+load "./exts/general.rb"
 
 client.extend Core::Evaler
 client.extend Core::Register
 client.extend Core::Nickname
 client.extend Core::Status
+client.extend Core::General
 
 client.run ENV["TOKEN"]  # Starts client
