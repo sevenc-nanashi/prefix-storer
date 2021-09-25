@@ -82,7 +82,7 @@ module Core::Register
       next
     end
     interaction.defer_source(ephemeral: true).wait
-    default_prefix = @client.db.exec_prepared("search_default_prefix", [bot.id.to_s]).first
+    default_prefix = @client.db.exec_prepared("search_default_prefix", [bot.id.to_s]).first&.yield_self { |row| row["prefix"] }
     prefix = if default_prefix
         interaction.post("#{bot.mention} のプレフィックスは `#{default_prefix}` がデフォルトとして設定されています。", ephemeral: true)
         default_prefix
