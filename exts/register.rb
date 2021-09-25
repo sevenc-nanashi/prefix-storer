@@ -88,7 +88,7 @@ module Core::Register
         default_prefix
       else
         prefixes = @client.db.exec_prepared("search_prefix_global", [bot.id.to_s])&.map { |row| row["prefix"] }
-        if prefixes == [nil]
+        if prefixes == []
           interaction.post("#{bot.mention} のプレフィックスを見つけられませんでした。", ephemeral: true)
           next
         end
