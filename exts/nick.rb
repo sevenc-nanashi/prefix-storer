@@ -30,7 +30,7 @@ module Core::Nickname
       end
 
       @client.db.exec_prepared("upsert_format", [interaction.guild.id.to_s, fmt])
-      interaction.post("フォーマットを指定しました。\nサンプル：#{format_prefix(fmt, "/", "Prefix Finder")}", ephemeral: true)
+      interaction.post("フォーマットを指定しました。\nサンプル：#{format_prefix(fmt, "/", "Prefix Storer")}", ephemeral: true)
       next
     end
 
