@@ -1,7 +1,7 @@
 require "discorb"
 
-module Core::Evaler
-  extend Discorb::Extension
+class Core::Evaler
+  include Discorb::Extension
   event :message do |message|
     next if message.author.bot?
     next unless message.content.start_with?("p?eval ")

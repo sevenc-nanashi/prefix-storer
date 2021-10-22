@@ -1,7 +1,7 @@
 require "discorb"
 
-module Core::Register
-  extend Discorb::Extension
+class Core::Register
+  include Discorb::Extension
 
   slash "register", "新しいプレフィックスを登録します。", {
     "bot" => {

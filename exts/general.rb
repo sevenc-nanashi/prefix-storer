@@ -1,7 +1,7 @@
 require "discorb"
 
-module Core::General
-  extend Discorb::Extension
+class Core::General
+  include Discorb::Extension
 
   slash "help", "ヘルプを表示します。" do |interaction|
     interaction.post <<~EOS, ephemeral: true

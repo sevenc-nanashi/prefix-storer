@@ -1,7 +1,7 @@
 require "discorb"
 
-module Core::Status
-  extend Discorb::Extension
+class Core::Status
+  include Discorb::Extension
 
   %i[standby guild_join guild_leave].each do |event_name|
     event event_name do

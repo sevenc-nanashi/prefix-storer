@@ -1,5 +1,5 @@
-module Core::Nickname
-  extend Discorb::Extension
+class Core::Nickname
+  include Discorb::Extension
 
   event :prepare_db do
     @client.db.prepare("find_prefix_in_guild", <<~SQL)

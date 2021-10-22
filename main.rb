@@ -30,16 +30,20 @@ end
 
 module Core; end
 
-load "./exts/eval.rb"
-load "./exts/register.rb"
-load "./exts/nick.rb"
-load "./exts/status.rb"
-load "./exts/general.rb"
+client.on :load_extension do
+  load "./exts/eval.rb"
+  load "./exts/register.rb"
+  load "./exts/nick.rb"
+  load "./exts/status.rb"
+  load "./exts/general.rb"
 
-client.extend Core::Evaler
-client.extend Core::Register
-client.extend Core::Nickname
-client.extend Core::Status
-client.extend Core::General
+  client.load_extension Core::Evaler
+  client.load_extension Core::Register
+  client.load_extension Core::Nickname
+  client.load_extension Core::Status
+  client.load_extension Core::General
+end
+
+client.dispatch(:load_extension)
 
 client.run ENV["TOKEN"]  # Starts client
