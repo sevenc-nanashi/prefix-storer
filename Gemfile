@@ -4,7 +4,7 @@ source "https://rubygems.org"
 
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
-gem "discorb", github: "discorb-lib/discorb"
+gem "discorb", "~> 0.12.2"
 gem "dotenv", "~> 2.7"
 
 gem "pg", "~> 1.2"
