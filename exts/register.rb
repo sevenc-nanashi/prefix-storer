@@ -39,7 +39,7 @@ class Core::Register
       next
     end
     interaction.defer_source(ephemeral: true).wait
-    prefix = @client.db.exec_prepared("select_prefix", [interaction.guild.id.to_s, bot.id.to_s]).first
+    prefix = @client.db.exec_prepared("select_prefix", [interaction.guild.id.to_s, bot.id.to_s])&.first
     unless prefix
       interaction.post("#{bot.mention} は登録されていません。", ephemeral: true)
       next
