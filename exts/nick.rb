@@ -2,6 +2,7 @@ class Core::Nickname
   include Discorb::Extension
 
   event :prepare_db do
+    sleep 2
     @client.db.prepare("find_prefix_in_guild", <<~SQL)
       SELECT prefix, bot_id FROM prefixes WHERE guild_id = $1
     SQL
@@ -24,7 +25,7 @@ class Core::Nickname
         required: true,
       },
     } do |interaction, fmt|
-      unless interaction.target.permissions.manage_guild?
+      unless interaction.member.permissions.manage_guild?
         interaction.post("`サーバーの管理`権限がありません。", ephemeral: true)
         next
       end
@@ -35,7 +36,7 @@ class Core::Nickname
     end
 
     group.slash "change", "Botのニックネームを変更します。", {} do |interaction|
-      unless interaction.target.permissions.manage_guild?
+      unless interaction.member.permissions.manage_guild?
         interaction.post("`サーバーの管理`権限がありません。", ephemeral: true)
         next
       end
@@ -78,9 +79,7 @@ class Core::Nickname
     end
   end
 
-  class << self
-    def format_prefix(base, prefix, name)
-      base.gsub("{prefix}", prefix).gsub("{name}", name)
-    end
+  def format_prefix(base, prefix, name)
+    base.gsub("{prefix}", prefix).gsub("{name}", name)
   end
 end

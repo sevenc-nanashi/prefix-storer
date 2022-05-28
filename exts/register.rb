@@ -15,7 +15,7 @@ class Core::Register
       required: true,
     },
   } do |interaction, bot, prefix|
-    unless interaction.target.permissions.manage_guild?
+    unless interaction.member.permissions.manage_guild?
       interaction.post("`サーバーの管理`権限がありません。", ephemeral: true)
       next
     end
@@ -54,7 +54,7 @@ class Core::Register
       type: :user,
     },
   } do |interaction, bot|
-    unless interaction.target.permissions.manage_guild?
+    unless interaction.member.permissions.manage_guild?
       interaction.post("`サーバーの管理`権限がありません。", ephemeral: true)
       next
     end
@@ -97,7 +97,7 @@ class Core::Register
         best_prefix
       end
 
-    next unless interaction.target.permissions.manage_guild?
+    next unless interaction.member.permissions.manage_guild?
 
     randstr = SecureRandom.hex(8)
     interaction.post("プレフィックスを登録しますか？", ephemeral: true,
@@ -121,7 +121,7 @@ class Core::Register
       type: :boolean,
     },
   } do |interaction, override|
-    unless interaction.target.permissions.manage_guild?
+    unless interaction.member.permissions.manage_guild?
       interaction.post("`サーバーの管理`権限がありません。", ephemeral: true)
       next
     end
